@@ -1,0 +1,24 @@
+{
+  "name": "firstfm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix back\" \"npm run dev --prefix front\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FelipeReis96/FirstFm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/FelipeReis96/FirstFm/issues"
+  },
+  "homepage": "https://github.com/FelipeReis96/FirstFm#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}

@@ -5,4 +5,3 @@ git clone <repo>
 cd FirstFm
 docker compose up -d
 ```
-Acesse pgAdmin: http://localhost:8080

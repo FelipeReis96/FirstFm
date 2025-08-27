@@ -11,7 +11,7 @@ export default function LoginForm() {
         e.preventDefault(); // ← Prevenir reload da página
         
         try {
-            const response = await fetch('http://localhost:4000/api/login', {
+            const response = await fetch('http://localhost:4000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -36,7 +36,7 @@ export default function LoginForm() {
         <div className="flex flex-col justify-center items-center p-6 h-[45vh] w-[35vh] rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
             <div className="font-bold text-lg p-4 text-[30px]">Login</div>
             
-            <form onSubmit={handleLogin} className="flex flex-col"> {/* ← onSubmit aqui */}
+            <form onSubmit={handleLogin} className="flex flex-col"> 
                 <input 
                     onChange={(e) => setEmail(e.target.value)} 
                     value={email}
@@ -54,7 +54,6 @@ export default function LoginForm() {
                     className="mb-2 p-2 rounded border border-white/30 bg-white/30 backdrop-blur-sm placeholder-gray-600 focus:outline-none focus:border-white/60 focus:bg-white/40 transition-all" 
                 />
                 
-                {/* BOTÃO SUBMIT */}
                 <button 
                     type="submit" 
                     className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"

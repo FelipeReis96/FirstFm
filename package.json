@@ -20,5 +20,8 @@
   "homepage": "https://github.com/FelipeReis96/FirstFm#readme",
   "devDependencies": {
     "concurrently": "^9.2.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.541.0"
   }
 }

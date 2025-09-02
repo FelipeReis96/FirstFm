@@ -10,7 +10,6 @@ export const getSpotifyLogin = (req: Request, res: Response) => {
         });
         
         const authURL = spotifyService.getAuthorizationUrl();
-        console.log('Generated URL:', authURL);
         res.json({ authUrl: authURL });
     } catch (error) {
         console.error('Error getting Spotify login URL:', error);
@@ -23,22 +22,15 @@ export const handleCallback = async (req: Request, res: Response) => {
         const code = req.query.code as string;
         
         if (!code) {
-            return res.status(400).json({ error: 'Código de autorização não fornecido' });
+            return res.redirect('http://localhost:3000/?error=no_code');
         }
 
         const tokens = await spotifyService.getTokens(code);
-        
-        res.json({
-            success: true,
-            access_token: tokens.access_token,
-            refresh_token: tokens.refresh_token,
-            expires_in: tokens.expires_in
-        }); // AGORA REDIRECIONAR PARA O FRONTEND COM OS TOKENS COMO PARAMETROS
+        const profile = await spotifyService.getUserProfile(tokens.access_token);
+        const data = await spotifyService.upsertAccessToken(profile.id, tokens.access_token, tokens.refresh_token,tokens.expires_in);
+        res.redirect(`http://localhost:3000/user/${profile.id}`);
     } catch (error) {
         console.error('Error handling Spotify callback:', error);
-        res.status(500).json({ 
-            error: 'Erro interno do servidor', 
-            details: error.message 
-        });
+        res.redirect('http://localhost:3000/?error=callback_failed');
     }
 }

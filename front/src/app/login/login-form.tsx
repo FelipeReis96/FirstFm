@@ -21,6 +21,7 @@ export default function LoginForm() {
             if (response.ok) {
                 alert('Login realizado com sucesso! 🎉');
                 console.log('Login successful', data);
+                window.location.href = '/spotify';
             } else {
                 alert(`Erro: ${data.error || 'Falha no login'}`);
                 console.error('Login failed', data);

@@ -1,6 +1,7 @@
 "use client";
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import Avatar from '../components/avatar';
 
 export default function Header() {
   return (
@@ -17,7 +18,7 @@ export default function Header() {
             />
         </div>
         <div className="absolute right-4 flex items-center space-x-4">
-            <Link href="/" className="text-white hover:text-gray-300">Your profile</Link>
+            <Avatar src="/hollow.png" alt="User Avatar" size={40} />
         </div>
       </div>
     </main>

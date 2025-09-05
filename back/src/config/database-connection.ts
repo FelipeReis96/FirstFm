@@ -2,10 +2,9 @@ import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// MUDANÇA AQUI: Ajustar o caminho para a raiz do projeto
+
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-// Debug para ver se carregou
 console.log('🔍 DATABASE_URL encontrada:', !!process.env.DATABASE_URL);
 console.log('📍 Valor:', process.env.DATABASE_URL?.substring(0, 30) + '...');
 

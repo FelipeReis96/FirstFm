@@ -8,8 +8,10 @@ export default function SpotifyPage() {
     setIsConnecting(true);
     
     try {
-      // Chama seu backend para pegar URL do Spotify
-      const response = await fetch('http://localhost:4000/api/spotify/login');
+      // Pegar o username do usuário logado no seu site
+      const currentUsername = getCurrentUsername(); // implementar essa função
+      
+      const response = await fetch(`http://localhost:4000/api/spotify/login?username=${currentUsername}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -25,6 +27,18 @@ export default function SpotifyPage() {
       setIsConnecting(false);
     }
   };
+
+  // Exemplo de como você pode pegar o username atual
+  function getCurrentUsername() {
+      // Opção 1: Do localStorage
+      return localStorage.getItem('username');
+      
+      // Opção 2: Do contexto/estado da aplicação
+      // return user.username;
+      
+      // Opção 3: Da URL atual
+      // return window.location.pathname.split('/').pop();
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900">

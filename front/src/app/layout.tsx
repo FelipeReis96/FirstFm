@@ -25,11 +25,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} h-screen h-full w-full max-w-screen overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} h-full w-full max-w-screen overflow-x-hidden`}
       >
-        {children}
+        <Header />
+        <main className="pt-[7vh] h-full">{children}</main>
       </body>
     </html>
   );

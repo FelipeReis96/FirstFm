@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface IAvatarProps {
     src: string;
     alt: string;
@@ -8,9 +10,14 @@ interface IAvatarProps {
 export default function Avatar({ src, alt, size, redirect }: IAvatarProps) {
     return (
         <div onClick = {() => redirect && (window.location.href = redirect)}>
-            <img src={src} alt={alt} 
-            className="rounded-full scale-100"
-            style={{ width: `${size}px`, height: `${size}px`}} />
+            <Image
+                src={src}
+                alt={alt}
+                width={size}
+                height={size}
+                className="rounded-full "
+                style={{ width: `${size}px`, height: `${size}px`}}
+            />
         </div>
     )
 }

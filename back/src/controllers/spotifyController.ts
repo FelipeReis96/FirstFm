@@ -54,3 +54,33 @@ export const getRecentTracks = async (req: Request, res:Response) => {
     }
 
 }
+
+export const getTopArtists = async (req: Request, res:Response) => {
+    try {
+        const username = req.params.userId as string;
+        const userSpotifyId = await spotifyService.getUserByUsername(username);
+        if (!userSpotifyId) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+        const topArtists = await spotifyService.getTopArtists(userSpotifyId.access_token);
+        res.json(topArtists);
+    } catch(error) {
+        console.error('Error fetching top artists:', error);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+}
+
+export const getTopTracks = async (req: Request, res:Response) => {
+    try {
+        const username = req.params.userId as string;
+        const userSpotifyId = await spotifyService.getUserByUsername(username);
+        if (!userSpotifyId) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+        const topTracks = await spotifyService.getTopTracks(userSpotifyId.access_token);
+        res.json(topTracks);
+    } catch(error) {
+        console.error('Error fetching top tracks:', error);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+}

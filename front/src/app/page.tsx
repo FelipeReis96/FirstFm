@@ -1,7 +1,6 @@
 "use client";
 import Header from './header/page';
 import Hero from './hero/hero';
-import RecentTracks from './components/recent-tracks';
 
 export default function Home() {
 

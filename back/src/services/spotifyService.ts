@@ -111,6 +111,24 @@ class SpotifyService {
         };
     }
 
+    async getTopArtists(accessToken: string) {
+        if (!accessToken) {
+            throw new Error('Invalid access token');
+        }
+        spotifyApi.setAccessToken(accessToken);
+        const data = await spotifyApi.getMyTopArtists({limit: 5});
+        return data.body;
+    }
+
+    async getTopTracks(accessToken: string) {
+        if (!accessToken) {
+            throw new Error('Invalid access token');
+        }
+        spotifyApi.setAccessToken(accessToken);
+        const data = await spotifyApi.getMyTopTracks({limit: 5});
+        return data.body;
+    }
+
 }
 
 export default new SpotifyService();

@@ -4,6 +4,9 @@ import { use, useState} from 'react';
 import Header from '../../header/page';
 import Hero from '../../hero/hero';
 import RecentTracks from '../../components/recent-tracks';
+import TopArtists from '../../components/top-artists';
+import TopTracks from '../../components/top-tracks';
+
 
 export default function UserPage({ params }: { params: Promise<{ userId: string }> }) {
 
@@ -32,13 +35,15 @@ export default function UserPage({ params }: { params: Promise<{ userId: string 
     }
   };
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col ">
           <div className="flex justify-center items-center flex-col">
             <Header />
             <Hero />
           </div>
-          <div className="ml-3 mt-7 sm:mt-14 md:pl-30 lg:pl-80 mt-8">
+          <div className="ml-3 mt-7 sm:mt-14 md:pl-30 lg:pl-80 ">
             <RecentTracks userId={userId} />
+            <TopArtists userId={userId} />
+            <TopTracks userId={userId} />
           </div>
       </div>
     );

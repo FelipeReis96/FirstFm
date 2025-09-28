@@ -23,10 +23,10 @@ export default function LoginForm() {
             if (response.ok) {
                 console.log('Login successful', data);
                 
-                // Salvar username no localStorage
+               
                 localStorage.setItem('username', data.user.username);
                 
-                // Conectar automaticamente com Spotify
+                
                 await connectSpotify(data.user.username);
                 
             } else {

@@ -19,9 +19,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/spotify', spotifyRoutes);
 
 
-// Rota de teste - ADICIONAR headers CORS explicitamente
 app.get('/', (req, res) => {
-  // ✅ Adicionar headers CORS diretamente na resposta
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, ngrok-skip-browser-warning');

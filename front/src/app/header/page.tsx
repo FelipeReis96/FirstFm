@@ -10,7 +10,7 @@ export default function Header() {
     <main>
       <div className="w-full bg-black flex items-center fixed top-0 right-0 left-0 h-[7vh]">
         <h1 className="text-white text-3xl font-bold ml-4">First.Fm</h1>
-        {(pathname !== '/login' && pathname !== '/register') && (
+        {(pathname !== '/login' && pathname !== '/register' && pathname !== '/') && (
           <>
             <div className="absolute left-1/2 transform -translate-x-1/2">
               <Search className="hidden sm:block absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />

@@ -20,7 +20,7 @@ export default function RegisterForm() {
             const data = await response.json();
             if (response.ok ) {
                 alert('Conta criada com sucesso! 🎉');
-                window.location.href = '/';
+                window.location.href = '/login';
             } else {
                 alert(`Erro: ${data.error || 'Falha no registro'}`);
             }

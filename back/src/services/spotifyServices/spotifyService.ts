@@ -3,7 +3,7 @@ import pool from '../../config/database-connection';
 
 class SpotifyService {
 
-    private readonly scopes = ['user-read-private', 'user-read-email', 'user-top-read','user-read-currently-playing', 'user-read-recently-played'];
+    public readonly scopes = ['user-read-private', 'user-read-email', 'user-top-read','user-read-currently-playing', 'user-read-recently-played'];
 
     getAuthorizationUrl(state?: string) { 
         const username = state || 'default_state';

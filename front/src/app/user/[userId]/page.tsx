@@ -6,6 +6,7 @@ import Hero from '../../hero/hero';
 import RecentTracks from '../../components/recent-tracks';
 import TopArtists from '../../components/top-artists';
 import TopTracks from '../../components/top-tracks';
+import Follows from '../../components/follows';
 
 
 export default function UserPage({ params }: { params: Promise<{ userId: string }> }) {
@@ -44,6 +45,7 @@ export default function UserPage({ params }: { params: Promise<{ userId: string 
             <RecentTracks userId={userId} />
             <TopArtists userId={userId} />
             <TopTracks userId={userId} />
+            <Follows />
           </div>
       </div>
     );

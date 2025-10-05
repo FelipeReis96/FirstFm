@@ -1,10 +1,13 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import pool from '../config/database-connection';
+import jwt from 'jsonwebtoken';
+import { SpotifyUserService } from '../services/spotifyServices/spotifyUserService';
 
+const userService = new SpotifyUserService();
 const router = Router();
 
-// Rota: POST /api/auth/login (o /api/auth vem do index.ts)
+
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -15,18 +18,13 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-    const result = await pool.query(
-      'SELECT * FROM fmuser WHERE email = $1', 
-      [email]
-    );
+    const user = await userService.getUserbyEmail(email);
 
-    if (result.rows.length === 0) {
+    if (!user) {
       return res.status(401).json({ 
         error: 'Usuário não encontrado' 
       });
     }
-
-    const user = result.rows[0];
 
     if (user.password !== password) {
       return res.status(401).json({ 
@@ -34,8 +32,10 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
+    const token = jwt.sign({id: user.id}, process.env.JWT_SECRET!, {expiresIn: '1d'});
+
     res.json({
-      message: 'Login realizado com sucesso!',
+      token,
       user: {
         id: user.id,
         email: user.email,

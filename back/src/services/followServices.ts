@@ -1,6 +1,6 @@
 import pool from '../config/database-connection';
 
-class FollowService {
+export class FollowService {
 
     async followUser(followerId: string, followeeId: string) {
         await pool.query(
@@ -24,7 +24,7 @@ class FollowService {
             WHERE follows.follower_id = $1`,
             [followerId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
 }

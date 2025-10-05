@@ -5,6 +5,7 @@ import path from 'path';
 
 import authRoutes from "./routes/authRoutes";
 import spotifyRoutes from "./routes/spotifyRoutes";
+import followsRouter from "./routes/followsRouter";
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/spotify', spotifyRoutes);
+app.use('/api', followsRouter);
 
 
 app.get('/', (req, res) => {

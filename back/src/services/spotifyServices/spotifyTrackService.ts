@@ -6,7 +6,6 @@ export class SpotifyTrackService extends SpotifyBaseService {
         const spotifyApi = this.createSpotifyApiInstance(accessToken);
         try {
             const data = await spotifyApi.getMyTopTracks({ limit: 5 });
-            console.log('USUARIO', await spotifyApi.getMe());
             return data.body;
         } catch (error) {
             console.error('Error fetching top tracks from Spotify:', error);

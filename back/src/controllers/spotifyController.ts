@@ -11,11 +11,6 @@ const artistService = new SpotifyArtistService();
 
 export const getSpotifyLogin = (req: Request, res: Response) => {
     try {
-        console.log('ENV vars:', {
-            clientId: process.env.SPOTIFY_CLIENT_ID ? 'SET' : 'MISSING',
-            clientSecret: process.env.SPOTIFY_CLIENT_SECRET ? 'SET' : 'MISSING',
-            redirectUri: process.env.SPOTIFY_REDIRECT_URI
-        });
         const userId = req.params.userId as string || req.query.username as string;
         const authURL = spotifyService.getAuthorizationUrl(userId);
         res.json({ authUrl: authURL });

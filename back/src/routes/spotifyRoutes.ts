@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { getSpotifyLogin, handleCallback, getRecentTracks, getTopArtists, getTopTracks} from '../controllers/spotifyController';
 
-
 const router = Router();
 
 router.get('/login', getSpotifyLogin);

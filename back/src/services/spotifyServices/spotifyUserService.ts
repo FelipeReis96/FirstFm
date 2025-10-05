@@ -23,6 +23,14 @@ export class SpotifyUserService extends SpotifyBaseService {
         return result.rows[0];
     }
 
+    async getUserbyEmail(email:string) {
+        const result = await pool.query(
+        'SELECT * FROM fmuser WHERE email = $1', 
+        [email]
+        );
+        return result.rows[0];
+    }
+
     async updateAccessToken(accessToken: string, refreshToken: string, expiresIn: number, username: string) {
         const result = await pool.query(`
             UPDATE fmuser SET

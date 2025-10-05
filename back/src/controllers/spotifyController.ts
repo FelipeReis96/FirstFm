@@ -1,14 +1,16 @@
-import spotifyService from '../services/spotifyService';
+import spotifyService from '../services/spotifyServices/spotifyService';
 import { Request, Response } from 'express';
-import pool from '../config/database-connection';
+import { SpotifyUserService } from '../services/spotifyServices/spotifyUserService';
+import { SpotifyTrackService } from '../services/spotifyServices/spotifyTrackService';
+import { SpotifyArtistService } from '../services/spotifyServices/spotifyArtistService';
+
+
+const userService = new SpotifyUserService();
+const trackService = new SpotifyTrackService();
+const artistService = new SpotifyArtistService();
 
 export const getSpotifyLogin = (req: Request, res: Response) => {
     try {
-        console.log('ENV vars:', {
-            clientId: process.env.SPOTIFY_CLIENT_ID ? 'SET' : 'MISSING',
-            clientSecret: process.env.SPOTIFY_CLIENT_SECRET ? 'SET' : 'MISSING',
-            redirectUri: process.env.SPOTIFY_REDIRECT_URI
-        });
         const userId = req.params.userId as string || req.query.username as string;
         const authURL = spotifyService.getAuthorizationUrl(userId);
         res.json({ authUrl: authURL });
@@ -30,8 +32,7 @@ export const handleCallback = async (req: Request, res: Response) => {
         }
 
         const tokens = await spotifyService.getTokens(code);
-        const spotifyProfile = await spotifyService.getUserProfile(tokens.access_token);
-        const updated = await spotifyService.updateAccessToken(spotifyProfile.id, tokens.access_token, tokens.refresh_token, tokens.expires_in, state);
+        const updated = await userService.updateAccessToken(tokens.access_token, tokens.refresh_token, tokens.expires_in, state);
         res.redirect(`http://localhost:3000/user/${state}`);
     } catch (error) {
         console.error('Error handling Spotify callback:', error);
@@ -42,11 +43,8 @@ export const handleCallback = async (req: Request, res: Response) => {
 export const getRecentTracks = async (req: Request, res:Response) => {
     try {
         const username = req.params.userId as string;
-        const userSpotifyId = await spotifyService.getUserByUsername(username);
-        if (!userSpotifyId) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
-        }
-        const recentTracks = await spotifyService.getRecentTracks(userSpotifyId.access_token);
+        const accessToken = await userService.getValidAccessToken(username);
+        const recentTracks = await trackService.getRecentTracks(accessToken);
         res.json(recentTracks);
     } catch(error) {
         console.error('Error fetching recent tracks:', error);
@@ -58,11 +56,8 @@ export const getRecentTracks = async (req: Request, res:Response) => {
 export const getTopArtists = async (req: Request, res:Response) => {
     try {
         const username = req.params.userId as string;
-        const userSpotifyId = await spotifyService.getUserByUsername(username);
-        if (!userSpotifyId) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
-        }
-        const topArtists = await spotifyService.getTopArtists(userSpotifyId.access_token);
+        const accessToken = await userService.getValidAccessToken(username);
+        const topArtists = await artistService.getTopArtists(accessToken);
         res.json(topArtists);
     } catch(error) {
         console.error('Error fetching top artists:', error);
@@ -73,11 +68,8 @@ export const getTopArtists = async (req: Request, res:Response) => {
 export const getTopTracks = async (req: Request, res:Response) => {
     try {
         const username = req.params.userId as string;
-        const userSpotifyId = await spotifyService.getUserByUsername(username);
-        if (!userSpotifyId) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
-        }
-        const topTracks = await spotifyService.getTopTracks(userSpotifyId.access_token);
+        const accessToken = await userService.getValidAccessToken(username);
+        const topTracks = await trackService.getTopTracks(accessToken);
         res.json(topTracks);
     } catch(error) {
         console.error('Error fetching top tracks:', error);

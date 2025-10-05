@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import {authService} from '@/services/authService';
 
 
 export default function LoginForm() {
@@ -21,12 +22,8 @@ export default function LoginForm() {
             const data = await response.json();
             
             if (response.ok) {
-                console.log('Login successful', data);
-                
-                // Salvar username no localStorage
-                localStorage.setItem('username', data.user.username);
-                
-                // Conectar automaticamente com Spotify
+                authService.setToken(data.token);
+                console.log('Token armazenado:', data.token);
                 await connectSpotify(data.user.username);
                 
             } else {

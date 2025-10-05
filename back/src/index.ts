@@ -5,6 +5,7 @@ import path from 'path';
 
 import authRoutes from "./routes/authRoutes";
 import spotifyRoutes from "./routes/spotifyRoutes";
+import followsRouter from "./routes/followsRouter";
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -17,11 +18,10 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/spotify', spotifyRoutes);
+app.use('/api', followsRouter);
 
 
-// Rota de teste - ADICIONAR headers CORS explicitamente
 app.get('/', (req, res) => {
-  // ✅ Adicionar headers CORS diretamente na resposta
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, ngrok-skip-browser-warning');

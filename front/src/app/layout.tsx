@@ -29,8 +29,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} h-full w-full max-w-screen overflow-x-hidden`}
       >
-        <Header />
-        <main className="pt-[7vh] h-full">{children}</main>
+        {/* Removi o <Header /> daqui */}
+        <main className="h-full">{children}</main>
       </body>
     </html>
   );

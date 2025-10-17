@@ -28,7 +28,7 @@ export default function Follows() {
             });
 
             if (!response.ok) {
-                throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+                throw Error(`Erro: ${response.status} - ${response.statusText}`);
             }
 
             const data = await response.json(); 

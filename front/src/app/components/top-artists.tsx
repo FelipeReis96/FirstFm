@@ -28,22 +28,24 @@ export default function TopArtists({userId}: {userId: string}) {
             {topArtists && topArtists.items && (
                 <h1 className="text-2xl font-bold ">TOP ARTISTS</h1>
             )}
-            <div className="flex flex-row w-full py-6">
-                <div className="w-1/2 h-full">
+            <div className="flex flex-row w-full py-6 h-96 md:h-140">
+                {firstArtist && (
+                    <div className="w-1/2 h-full relative">
                     <img 
                         src={firstArtist?.images[0]?.url} 
                         alt={firstArtist?.name} 
-                        className="w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                     />
                 </div>
+                )}
                 
-                <div className="w-1/2 h-full grid grid-cols-2">
+                <div className="w-1/2 grid grid-cols-2 h-full">
                     {topArtists && topArtists.items && topArtists.items.slice(1, 5).map((artist: any, index: number) => (
-                        <div key={index} className="w-full ">
+                        <div key={index} className="h-full w-full relative overflow-hidden">
                             <img 
                                 src={artist.images[0]?.url} 
                                 alt={artist.name} 
-                                className="w-full h-full object-cover"
+                                className=" w-full h-full object-cover absolute inset-0"
                             />
                         </div>
                     ))}

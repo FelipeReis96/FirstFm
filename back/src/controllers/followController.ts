@@ -1,11 +1,9 @@
 import {FollowService} from "../services/followServices"
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../authRequestInterface";
 
 const followService = new FollowService();
 
-interface AuthenticatedRequest extends Request {
-  user: { id: string };
-}
 
 export const followUser = async (req: AuthenticatedRequest, res: Response) => {
     const followeeId = req.body.followeeId as string;

@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes";
 import spotifyRoutes from "./routes/spotifyRoutes";
 import followsRouter from "./routes/followsRouter";
 import userRoutes from "./routes/userRoutes";
+import adminRoutes from "./routes/adminRoutes";
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -21,7 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/spotify', spotifyRoutes);
 app.use('/api', followsRouter);
 app.use('/api/users', userRoutes);
-
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

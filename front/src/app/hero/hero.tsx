@@ -29,7 +29,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="w-full h-[15vh] h-[20vh] sm:h-[30vh] border-b border-gray-300 ">
+    <div className="w-full h-[15vh] h-[20vh] sm:h-[30vh] border-b border-gray-300 mt-10">
       <section className=" w-full h-[10vh] sm:h-[18vh] w-full bg-gradient-to-br from-[var(--a)] via-[var(--b)] to-[var(--c)] flex justify-start items-start">
         <div className="flex justify-center items-center"></div>
       <div className="ml-3 mt-7 sm:mt-14 md:pl-30 lg:pl-80 flex flex-row w-auto">

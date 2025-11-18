@@ -45,7 +45,6 @@ export default function UserPage({ params }: { params: Promise<{ userId: string 
             <RecentTracks userId={userId} />
             <TopArtists userId={userId} />
             <TopTracks userId={userId} />
-            <Follows />
           </div>
       </div>
     );

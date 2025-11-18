@@ -1,16 +1,22 @@
-
+export const TOKEN_KEY = 'jwt_token';
+export const USER_KEY = 'app_user';
 
 export const authService = {
     setToken(token: string) {
-        localStorage.setItem('jwt_token', token);
+        localStorage.setItem(TOKEN_KEY, token);
     },
 
     getToken(): string | null {
-        return localStorage.getItem('jwt_token');
+        return localStorage.getItem(TOKEN_KEY);
     },
 
     removeToken() {
-        localStorage.removeItem('jwt_token');
+        localStorage.removeItem(TOKEN_KEY);
+    },
+
+    clearSession() {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
     },
 
     isAuthenticated(): boolean {

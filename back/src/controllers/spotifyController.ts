@@ -11,8 +11,8 @@ const artistService = new SpotifyArtistService();
 
 export const getSpotifyLogin = (req: Request, res: Response) => {
     try {
-        const userId = req.params.userId as string || req.query.username as string;
-        const authURL = spotifyService.getAuthorizationUrl(userId);
+        const username = req.params.username as string || req.query.username as string;
+        const authURL = spotifyService.getAuthorizationUrl(username);
         res.json({ authUrl: authURL });
     } catch (error) {
         console.error('Error getting Spotify login URL:', error);
@@ -32,7 +32,7 @@ export const handleCallback = async (req: Request, res: Response) => {
         }
 
         const tokens = await spotifyService.getTokens(code);
-        const updated = await userService.updateAccessToken(tokens.access_token, tokens.refresh_token, tokens.expires_in, state);
+        const updated = await userService.refreshAccess(tokens.access_token, tokens.refresh_token, tokens.expires_in, state);
         res.redirect(`http://localhost:3000/user/${state}`);
     } catch (error) {
         console.error('Error handling Spotify callback:', error);
@@ -42,7 +42,7 @@ export const handleCallback = async (req: Request, res: Response) => {
 
 export const getRecentTracks = async (req: Request, res:Response) => {
     try {
-        const username = req.params.userId as string;
+        const username = req.params.username as string;
         const accessToken = await userService.getValidAccessToken(username);
         const recentTracks = await trackService.getRecentTracks(accessToken);
         res.json(recentTracks);
@@ -55,7 +55,7 @@ export const getRecentTracks = async (req: Request, res:Response) => {
 
 export const getTopArtists = async (req: Request, res:Response) => {
     try {
-        const username = req.params.userId as string;
+        const username = req.params.username as string;
         const accessToken = await userService.getValidAccessToken(username);
         const topArtists = await artistService.getTopArtists(accessToken);
         res.json(topArtists);
@@ -67,7 +67,7 @@ export const getTopArtists = async (req: Request, res:Response) => {
 
 export const getTopTracks = async (req: Request, res:Response) => {
     try {
-        const username = req.params.userId as string;
+        const username = req.params.username as string;
         const accessToken = await userService.getValidAccessToken(username);
         const topTracks = await trackService.getTopTracks(accessToken);
         res.json(topTracks);

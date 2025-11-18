@@ -1,43 +1,69 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {authService} from '@/services/authService';
+import { useAtomValue, useSetAtom} from 'jotai';
+import { userAtom } from '../atoms/user.atoms';
+import { useRouter } from 'next/navigation';
 
 
 export default function LoginForm() {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const setUser = useSetAtom(userAtom);
+    // ler o atom no componente, mas não usar essa variável para checar imediatamente após setUser
+    const user = useAtomValue(userAtom);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoggingIn(true);
-        
         try {
             const response = await fetch('http://localhost:4000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
+
             const data = await response.json();
-            
-            if (response.ok) {
-                authService.setToken(data.token);
-                console.log('Token armazenado:', data.token);
-                await connectSpotify(data.user.username);
-                
-            } else {
+            if (!response.ok) {
                 alert(`Erro: ${data.error || 'Falha no login'}`);
-                console.error('Login failed', data);
-                setIsLoggingIn(false);
+                return;
             }
 
-        } catch (error) {
+            authService.setToken(data.token);
+
+            const meRes = await fetch('http://localhost:4000/api/users/me', {
+                headers: { Authorization: `Bearer ${data.token}` }
+            });
+            if (!meRes.ok) {
+                throw new Error('Falha ao obter /me');
+            }
+            const me = await meRes.json();
+
+            setUser({
+                id: me.id,
+                username: me.username,
+                email: me.email,
+                role: me.role
+            });
+            if (!me.spotifyConnected) {
+                await connectSpotify(me.username);
+                console.log('SPOTIFY AAAAAAAAAAAAAAAAAA');
+            }
+            else {
+                router.push(`/user/${me.username}`);
+            }
+            
+        } catch (err) {
+            console.error('Erro no login:', err);
             alert('Erro de conexão com o servidor');
-            console.error('Error logging in:', error);
+        } finally {
             setIsLoggingIn(false);
         }
     };
+ 
 
     const connectSpotify = async (username: string) => {
         try {
@@ -47,15 +73,15 @@ export default function LoginForm() {
             const data = await response.json();
             
             if (response.ok) {
-                window.location.href = data.authUrl;
+                router.push(data.authUrl);
             } else {
                 alert('Erro ao conectar com Spotify, redirecionando para perfil...');
-                window.location.href = `/user/${username}`;
+                router.push(`/user/${username}`);
             }
         } catch (error) {
             console.error('Erro ao conectar com Spotify:', error);
             alert('Erro de conexão com Spotify, redirecionando para perfil...');
-            window.location.href = `/user/${username}`;
+            router.push(`/user/${username}`);
         }
     };
 

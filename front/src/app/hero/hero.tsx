@@ -1,13 +1,76 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Avatar from "../components/avatar";
-import{useRouter} from 'next/navigation';
+import{useRouter, usePathname} from 'next/navigation';
+import { userAtom, isAdmin} from '../atoms/user.atoms';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 export default function Hero() {
   const [avatarSize, setAvatarSize] = useState(180);
   const router = useRouter();
+  const user = useAtomValue(userAtom);
+  //const isUserAdmin = useAtomValue(isAdmin);
+  const pathname = usePathname();
+  const slugs = pathname.split('/');
+  console.log('Slugs:', slugs);
+  const userFromPath = slugs[2];
+
+  const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const run = async () => {
+      const token = localStorage.getItem('jwt_token');
+      try {
+        const response = await fetch(`http://localhost:4000/api/status/${userFromPath}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        console.log('Follow status data:', data);
+        setIsFollowing(!!data.isFollowing);
+      } catch (error) {
+        console.error('Error fetching follow status:', error);
+      }
+    }
+    run();
+  },[userFromPath]);
+  
+  const handleFollowUser = async () => {
+    const token = localStorage.getItem('jwt_token');
+    try {
+      const userId = await fetch(`http://localhost:4000/api/users/getId/${userFromPath}`);
+      const userIdData = await userId.json();
+      if (!isFollowing) {
+        const response = await fetch('http://localhost:4000/api/follow', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ followeeId: userIdData.id }),
+      });
+      console.log('FOLLOWWWW');
+      setIsFollowing(prev => !prev);
+      } else {
+        const response = await fetch('http://localhost:4000/api/unfollow', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ followeeId: userIdData.id }),
+        });
+        console.log('UNFOLOOWWWW');
+        setIsFollowing(prev => !prev);
+      }
+    } catch (error) {
+      console.error('Error following user:', error);
+    }
+  }
+
   const seeFollowing = () => {
-    router.push('/user/teste/following');
+    router.push(`/user/${user?.username}/following`);
   }
 
   useEffect(() => {
@@ -35,7 +98,7 @@ export default function Hero() {
       <div className="ml-3 mt-7 sm:mt-14 md:pl-30 lg:pl-80 flex flex-row w-auto">
         <Avatar src="/hollow.png" alt="User Avatar" size={avatarSize} />
         <div className=" ml-5 mt-5 font-bold text-[21px] h-auto">
-          AAAAAAA
+          {userFromPath}
           <div onClick={seeFollowing}
           className="mt-4 font-normal relative group cursor-pointer">
             <span className="relative">
@@ -43,13 +106,13 @@ export default function Hero() {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
             </span>
           </div>
+          {user?.username != userFromPath && user && (<button onClick={handleFollowUser}
+          className="mt-4 text-black flex justify-center items-center rounded-full bg-blue-500 p-1">
+            {isFollowing ? 'Unfollow' : 'Follow'}
+          </button>)}
         </div>
       </div>
     </section>
-    <div className="flex justify-center items-center text-black mt-5 font-bold">
-        
-        ABOUT ME 
-      </div>
     </div>
     
   );

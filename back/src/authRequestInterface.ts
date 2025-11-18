@@ -5,5 +5,6 @@ export interface AuthenticatedRequest extends Request {
     id: string;
     role?: string;
     username: string;
+    spotifyConnected?: boolean;
   };
 }

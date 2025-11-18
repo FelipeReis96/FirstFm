@@ -12,7 +12,7 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
         const result = await pool.query(
-            'SELECT id, username, role FROM fmuser WHERE id = $1',
+            'SELECT id, username, role, refresh_token FROM fmuser WHERE id = $1',
             [decoded.id]
         );
 

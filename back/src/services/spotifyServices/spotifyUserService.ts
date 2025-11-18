@@ -31,7 +31,25 @@ export class SpotifyUserService extends SpotifyBaseService {
         return result.rows[0];
     }
 
-    async updateAccessToken(accessToken: string, refreshToken: string, expiresIn: number, username: string) {
+    async updateAccessToken(accessToken: string, refreshToken: string, expiresIn: number, id: string) {
+            const result = await pool.query(`
+                UPDATE fmuser SET
+                    access_token = $1, 
+                    refresh_token = $2, 
+                    token_expires_at = $3 
+                WHERE id = $4
+                RETURNING *`,
+                [accessToken, refreshToken, new Date(Date.now() + expiresIn * 1000), id]
+            );
+            
+            if (result.rows.length === 0) {
+                throw new Error(`Usuário '${id}' não encontrado`);
+            }
+            
+            return result.rows[0]; 
+    }
+
+    async refreshAccess(accessToken: string, refreshToken: string, expiresIn: number, username: string) {
         const result = await pool.query(`
             UPDATE fmuser SET
                 access_token = $1, 
@@ -49,24 +67,26 @@ export class SpotifyUserService extends SpotifyBaseService {
         return result.rows[0]; 
     }
 
-    async getValidAccessToken(username: string) {
-        const user = await this.getUserByUsername(username);
-        if (!user) {
-            throw new Error(`User ${username} not found`);
-        }
-        const now = new Date();
-        if (user.token_expires_at > now) {
-            return user.access_token;
-        }
-        console.log("ACCESS TOKEN ", user.access_token);
-    
-        try {
-            const tokens = await this.refreshAccessToken(user.refresh_token);
-            const updatedUser = await this.updateAccessToken(tokens.access_token, tokens.refresh_token || user.refresh_token, tokens.expires_in, username);
-            return updatedUser.access_token;
-        } catch (error) {
-            console.error('Error refreshing access token:', error);
-            throw new Error(`Failed to refresh access token: ${error.message}`);
-        }
+    async getValidAccessToken(username: string): Promise<string> {
+        const row = await this.getUserByUsername(username); // SELECT ... WHERE username=$1
+        if (!row) throw new Error('User not found');
+
+        const access = row.access_token;
+        const refresh = row.refresh_token;
+        const expiresAt = row.token_expires_at ? new Date(row.token_expires_at).getTime() : 0;
+
+        if (!refresh) throw new Error('User not connected to Spotify');
+
+        // margem de 60s
+        if (access && Date.now() < (expiresAt - 60_000)) return access;
+
+        // refresh
+        const tokens = await this.refreshAccessToken(refresh); // faça POST /api/token com grant_type=refresh_token
+        const newAccess = tokens.access_token as string;
+        const newRefresh = (tokens.refresh_token as string) || refresh;
+        const newExpiresAt = Date.now() + (tokens.expires_in as number) * 1000;
+
+        await this.updateAccessToken(newAccess, newRefresh, tokens.expires_in, row.id /* id do usuário dono do username */);
+        return newAccess;
     }
 }

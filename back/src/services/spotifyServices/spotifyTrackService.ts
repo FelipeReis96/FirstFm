@@ -1,26 +1,20 @@
 import { SpotifyBaseService } from './spotifyBaseService';
-import spotifyApi from '../../config/spotify-config';
 
 export class SpotifyTrackService extends SpotifyBaseService {
     async getTopTracks(accessToken: string) {
-        const spotifyApi = this.createSpotifyApiInstance(accessToken);
-        try {
-            const data = await spotifyApi.getMyTopTracks({ limit: 5 });
-            return data.body;
-        } catch (error) {
-            console.error('Error fetching top tracks from Spotify:', error);
-            throw new Error('Failed to fetch top tracks');
-        }
+        const r = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=5', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!r.ok) throw new Error('spotify api error');
+        return r.json();
     }
 
     async getRecentTracks(accessToken: string) {
-        const spotifyApi = this.createSpotifyApiInstance(accessToken);
-        try {
-            const data = await spotifyApi.getMyRecentlyPlayedTracks({ limit: 5 });
-            return data.body;
-        } catch (error) {
-            console.error('Error fetching recent tracks from Spotify:', error);
-            throw new Error('Failed to fetch recent tracks');
-        }
+        const r = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=5', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (r.status === 204) return { items: [] };
+        if (!r.ok) throw new Error('spotify api error');
+        return r.json();
     }
 }

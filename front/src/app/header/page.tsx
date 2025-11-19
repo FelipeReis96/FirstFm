@@ -3,6 +3,10 @@ import { Search } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import Avatar from '../components/avatar';
 import { useState, useEffect, useRef } from 'react';
+import { userAtom, isAdmin} from '../atoms/user.atoms';
+import { useAtomValue } from 'jotai';
+  
+
 
 export default function Header() {
   const router = useRouter();
@@ -12,6 +16,8 @@ export default function Header() {
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
+  const isUserAdmin = useAtomValue(isAdmin);
+  const userJotai = useAtomValue(userAtom);
 
   // Detect clicks outside the search results to close it
   useEffect(() => {
@@ -69,6 +75,8 @@ export default function Header() {
     setShowResults(false);
   };
 
+  console.log("IS ADMIN HEADER:", isUserAdmin);
+
   return (
     <main>
       <div className="w-full bg-black flex items-center fixed top-0 right-0 left-0 h-[7vh] z-50">
@@ -101,7 +109,8 @@ export default function Header() {
                         <Avatar 
                           src={user.avatarimage || "/hollow.png"} 
                           alt={user.username} 
-                          size={32} 
+                          size={32}
+
                         />
                         <span className="ml-2 text-white">{user.username}</span>
                       </div>
@@ -113,7 +122,17 @@ export default function Header() {
               )}
             </div>
             <div className="absolute right-4 flex items-center space-x-4">
-              <Avatar src="/hollow.png" alt="User Avatar" size={40} />
+              {userJotai && (<Avatar
+                src="/hollow.png"
+                alt="User Avatar"
+                size={40}
+                openActions
+                name={userJotai?.username}
+                email={userJotai?.email}
+                isAdmin={isUserAdmin}
+                
+    
+              />)}
             </div>
           </>
         )}

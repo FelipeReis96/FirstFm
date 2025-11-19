@@ -5,8 +5,8 @@ const router = Router();
 
 router.get('/login', getSpotifyLogin);
 router.get('/callback', handleCallback);
-router.get('/recent-tracks/:userId', getRecentTracks);
-router.get('/top-artists/:userId', getTopArtists);
-router.get('/top-tracks/:userId', getTopTracks);
+router.get('/recent-tracks/:username', getRecentTracks);
+router.get('/top-artists/:username', getTopArtists);
+router.get('/top-tracks/:username', getTopTracks);
 
 export default router;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AppProviders } from "./providers";
 
 import Header from "./header/page";
 
@@ -29,8 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} h-full w-full max-w-screen overflow-x-hidden`}
       >
-        {/* Removi o <Header /> daqui */}
-        <main className="h-full">{children}</main>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

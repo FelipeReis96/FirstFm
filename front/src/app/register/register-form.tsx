@@ -1,8 +1,10 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 
 export default function RegisterForm() {
+    const router = useRouter();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -20,7 +22,7 @@ export default function RegisterForm() {
             const data = await response.json();
             if (response.ok ) {
                 alert('Conta criada com sucesso! 🎉');
-                window.location.href = '/login';
+                router.push('/login');
             } else {
                 alert(`Erro: ${data.error || 'Falha no registro'}`);
             }

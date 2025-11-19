@@ -1,5 +1,6 @@
 import spotifyApi from '../../config/spotify-config';
 import pool from '../../config/database-connection';
+import querystring from 'querystring';
 
 class SpotifyService {
 
@@ -7,49 +8,51 @@ class SpotifyService {
 
     getAuthorizationUrl(state?: string) { 
         const username = state || 'default_state';
-        return spotifyApi.createAuthorizeURL(this.scopes, username);
+        const url = 'https://accounts.spotify.com/authorize?' + 
+        querystring.stringify({
+            response_type: 'code',
+            client_id: process.env.SPOTIFY_CLIENT_ID,
+            scope: this.scopes.join(' '),
+            redirect_uri: process.env.SPOTIFY_REDIRECT_URI,
+            state: username,
+            show_dialog: true,
+        });
+        return url;
     }
 
-    async getMyUsername(username: string) {
-        const result = await pool.query(
-            'SELECT * FROM fmuser WHERE username = $1',
-            [username]
-        );
-        return result.rows[0];
-    }
 
     async getTokens(code: string) {
-        const data = await spotifyApi.authorizationCodeGrant(code);
+        const response = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + Buffer.from(
+                `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+                ).toString('base64'),
+            },
+            body: querystring.stringify({
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: process.env.SPOTIFY_REDIRECT_URI,
+            })
+        })
+        const data = await response.json();
         return {
-            access_token: data.body.access_token,
-            refresh_token: data.body.refresh_token,
-            expires_in: data.body.expires_in
+            access_token: data.access_token,
+            refresh_token: data.refresh_token,
+            expires_in: data.expires_in
         };
     }
 
-    async getUserBySpotifyId(userId: string) {
-        const result = await pool.query(
-            'SELECT * FROM fmuser WHERE spotify_id = $1',
-            [userId]
-        )
-        return result.rows[0];
-    }
 
-    async getSpotifyIdByUsername(username: string) {
-        const result = await pool.query(
-            'SELECT spotify_id FROM fmuser WHERE username = $1',
-            [username]
-        );
-        return result.rows[0]?.spotify_id;
-    }
 
     async getCurrentUserTrack(accessToken: string) {
-        if (!accessToken) {
-            throw new Error('Token de acesso inválido');
-        }
-        spotifyApi.setAccessToken(accessToken);
-        const data = await spotifyApi.getMyCurrentPlayingTrack();
-        return data.body;
+        if (!accessToken) throw new Error('Token de acesso inválido');
+        const r = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (r.status === 204) return null;
+        return r.json();
     }
 
 }

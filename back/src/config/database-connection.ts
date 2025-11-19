@@ -5,9 +5,6 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-console.log('🔍 DATABASE_URL encontrada:', !!process.env.DATABASE_URL);
-console.log('📍 Valor:', process.env.DATABASE_URL?.substring(0, 30) + '...');
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {

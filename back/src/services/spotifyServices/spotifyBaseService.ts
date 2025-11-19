@@ -16,13 +16,33 @@ export class SpotifyBaseService {
     }
 
     protected async refreshAccessToken(refreshToken: string) {
-        const spotifyApi = this.createSpotifyApiInstance();
-        spotifyApi.setRefreshToken(refreshToken);
-        const data = await spotifyApi.refreshAccessToken();
+        if (!refreshToken) throw new Error('Missing refresh_token');
+
+        const resp = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization':
+                    'Basic ' + Buffer.from(
+                        `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+                    ).toString('base64'),
+            },
+            body: new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+            }),
+        });
+
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(`Failed to refresh token: ${resp.status} ${JSON.stringify(err)}`);
+        }
+
+        const data = await resp.json();
         return {
-            access_token: data.body.access_token,
-            refresh_token: data.body.refresh_token || refreshToken,
-            expires_in: data.body.expires_in
+            access_token: data.access_token as string,
+            refresh_token: (data.refresh_token as string | undefined) || refreshToken,
+            expires_in: data.expires_in as number,
         };
     }
 }

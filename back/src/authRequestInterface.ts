@@ -6,5 +6,7 @@ export interface AuthenticatedRequest extends Request {
     role?: string;
     username: string;
     spotifyConnected?: boolean;
+    email?: string;
+    avatarimage?: string;
   };
 }

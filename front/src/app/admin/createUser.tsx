@@ -30,7 +30,7 @@ const registerSchema = z.object({
   path: ["confirmPassword"],
 });
 
-const Register = () => {
+const CreateUser = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail]     = useState('');
   const [password, setPassword] = useState('');
@@ -85,13 +85,7 @@ const Register = () => {
       <Card className="w-full max-w-md p-8 bg-gradient-card border-border/50 shadow-card">
         {/* Logo e Título */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 shadow-glow">
-            <Music className="w-8 h-8 text-primary-foreground" />
-          </div>
           <h1 className="text-3xl font-bold mb-2">Create Account</h1>
-          <p className="text-muted-foreground text-center">
-            Join FirstFM and discover your music
-          </p>
         </div>
 
         {/* Formulário */}
@@ -197,32 +191,10 @@ const Register = () => {
             )}
           </Button>
         </form>
-
-        {/* Link para login */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            Already have an account?{' '}
-            <Link
-              href="/login"
-              className="text-primary hover:text-primary-glow font-medium transition-colors"
-            >
-              Sign In
-            </Link>
-          </p>
-        </div>
-
-        {/* Opção de voltar */}
-        <div className="mt-4 text-center">
-          <Link
-            href="/"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Back to home
-          </Link>
-        </div>
+        
       </Card>
     </div>
   );
 };
 
-export default Register;
+export default CreateUser;

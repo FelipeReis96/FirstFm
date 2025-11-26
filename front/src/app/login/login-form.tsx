@@ -1,22 +1,38 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import {authService} from '@/services/authService';
-import { useAtomValue, useSetAtom} from 'jotai';
-import { userAtom } from '../atoms/user.atoms';
 import { useRouter } from 'next/navigation';
+import { userAtom } from '../atoms/user.atoms';
+import { useSetAtom } from 'jotai';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card } from '../components/ui/card';
+import { Label } from '../components/ui/label';
+import { Music, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import {authService} from '@/services/authService';
 
+// Validation schema (zod)
+const loginSchema = z.object({
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email" })
+    .max(255, { message: "Email too long" }),
+  password: z.string()
+    .min(3, { message: "Password must be at least 6 characters" })
+    .max(100, { message: "Password too long" })
+});
 
 export default function LoginForm() {
-    const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isLoggingIn, setIsLoggingIn] = useState(false);
-    const setUser = useSetAtom(userAtom);
-    // ler o atom no componente, mas não usar essa variável para checar imediatamente após setUser
-    const user = useAtomValue(userAtom);
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const setUser = useSetAtom(userAtom);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
-    const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoggingIn(true);
         try {
@@ -46,7 +62,8 @@ export default function LoginForm() {
                 id: me.id,
                 username: me.username,
                 email: me.email,
-                role: me.role
+                role: me.role,
+                avatarimage: me.avatarimage
             });
             if (!me.spotifyConnected) {
                 await connectSpotify(me.username);
@@ -63,64 +80,112 @@ export default function LoginForm() {
             setIsLoggingIn(false);
         }
     };
- 
 
-    const connectSpotify = async (username: string) => {
-        try {
-            console.log('Conectando com Spotify para:', username);
-            
-            const response = await fetch(`http://localhost:4000/api/spotify/login?username=${username}`);
-            const data = await response.json();
-            
-            if (response.ok) {
-                router.push(data.authUrl);
-            } else {
-                alert('Erro ao conectar com Spotify, redirecionando para perfil...');
-                router.push(`/user/${username}`);
-            }
-        } catch (error) {
-            console.error('Erro ao conectar com Spotify:', error);
-            alert('Erro de conexão com Spotify, redirecionando para perfil...');
-            router.push(`/user/${username}`);
-        }
-    };
+  const connectSpotify = async (username: string) => {
+    try {
+      const resp = await fetch(`http://localhost:4000/api/spotify/login?username=${encodeURIComponent(username)}`);
+      const data = await resp.json();
+      if (resp.ok && data.authUrl) {
+        router.push(data.authUrl);
+      } else {
+        router.push(`/user/${username}`);
+      }
+    } catch {
+      router.push(`/user/${username}`);
+    }
+  };
 
-    return (
-        <div className="flex flex-col justify-center items-center p-6 h-[45vh] w-[35vh] rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
-            <div className="font-bold text-lg p-4 text-[30px]">Login</div>
-            
-            <form onSubmit={handleLogin} className="flex flex-col"> 
-                <input 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    value={email}
-                    type="email" 
-                    placeholder="Email" 
-                    required
-                    disabled={isLoggingIn}
-                    className="mb-2 p-2 rounded border border-white/30 bg-white/30 backdrop-blur-sm placeholder-gray-600 focus:outline-none focus:border-white/60 focus:bg-white/40 transition-all disabled:opacity-50" 
-                />
-                <input 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    value={password}
-                    type="password" 
-                    placeholder="Password" 
-                    required
-                    disabled={isLoggingIn}
-                    className="mb-2 p-2 rounded border border-white/30 bg-white/30 backdrop-blur-sm placeholder-gray-600 focus:outline-none focus:border-white/60 focus:bg-white/40 transition-all disabled:opacity-50" 
-                />
-                
-                <button 
-                    type="submit" 
-                    disabled={isLoggingIn}
-                    className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 text-white rounded transition-colors"
-                >
-                    {isLoggingIn ? 'Conectando...' : 'Login'}
-                </button>
-            </form>
-            
-            <Link href="/register" className="mt-4 text-sm text-white hover:underline">
-                Don&apos;t have an account? Register
-            </Link>
+  return (
+    <div className="flex items-center justify-center bg-gradient-hero ">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl -z-10" />
+
+      <Card className="w-full max-w-md p-8 bg-gradient-card border-border/50 shadow-card">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 shadow-glow">
+            <Music className="w-8 h-8 text-primary-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold mb-2">Welcome to FirstFM</h1>
+          <p className="text-muted-foreground text-center">
+            Sign in to view your music stats
+          </p>
         </div>
-    )
+
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-foreground">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoggingIn}
+              className={`bg-background/50 border-border/50 focus:border-primary ${
+                errors.email ? 'border-destructive' : ''
+              }`}
+              required
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-foreground">
+              Password
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoggingIn}
+              className={`bg-background/50 border-border/50 focus:border-primary ${
+                errors.password ? 'border-destructive' : ''
+              }`}
+              required
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password}</p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            variant="hero"
+            size="lg"
+            className="w-full"
+            disabled={isLoggingIn}
+          >
+            {isLoggingIn ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              'Sign In'
+            )}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            Don&apos;t have an account?{' '}
+            <Link href="/register" className="text-primary hover:text-primary-glow font-medium transition-colors">
+              Create account
+            </Link>
+          </p>
+        </div>
+
+        <div className="mt-4 text-center">
+          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            Back to home
+          </Link>
+        </div>
+      </Card>
+    </div>
+  );
 }

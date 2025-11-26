@@ -12,8 +12,8 @@ interface IAvatarProps {
   src: string;
   alt: string;
   size: number;
-  redirect?: string;     // se openActions=false, clicar no avatar navega
-  openActions?: boolean; // se true, abre o menu abaixo do avatar
+  redirect?: string;     
+  openActions?: boolean;
   name?: string;
   email?: string;
   isAdmin?: boolean;
@@ -109,6 +109,7 @@ export default function Avatar({
                   height={40}
                   className="rounded-full"
                   onClick={() => router.push(`/user/${name}`)}
+                  
                 />
                 <div className="min-w-0">
                   {name && <div className="font-semibold truncate">{name}</div>}

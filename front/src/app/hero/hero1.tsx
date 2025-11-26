@@ -8,7 +8,7 @@ const Hero1 = () => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src={"@/assets/hero-bg.jpg"} 
+          src={"/hero-bg.jpg"} 
           alt="FirstFM Hero Background" 
           className="w-full h-full object-cover opacity-20"
         />
@@ -20,24 +20,24 @@ const Hero1 = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 backdrop-blur-sm border border-primary/20">
-            <Music className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">
-              Suas estatísticas do Spotify em tempo real
+            <Music className="w-6 h-6 text-primary" />
+            <span className="text-md text-muted-foreground">
+              Your Spotify stats in real time
             </span>
           </div>
 
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-            Descubra seu{" "}
+            Discover your{" "}
             <span className="text-primary bg-gradient-primary bg-clip-text text-transparent">
-              DNA Musical
+              Musical DNA
             </span>
           </h1>
 
           {/* Description */}
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            FirstFM analisa suas músicas, álbuns e artistas mais tocados no Spotify. 
-            Veja suas estatísticas detalhadas e descubra seus hábitos musicais.
+            FirstFM analyzes your most played songs, albums and artists. 
+            See detailed statistics and uncover your listening habits.
           </p>
 
           {/* CTA Buttons */}
@@ -48,7 +48,7 @@ const Hero1 = () => {
               className="text-lg px-8"
               onClick={() => window.location.href = '/login'}
             >
-              Conectar com Spotify
+              Login
             </Button>
             <Button 
               variant="outlinePrimary" 
@@ -56,33 +56,8 @@ const Hero1 = () => {
               className="text-lg px-8"
               onClick={() => window.location.href = '/register'}
             >
-              Criar Conta
+              Sign Up
             </Button>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12">
-            <div className="space-y-2">
-              <div className="flex items-center justify-center gap-2 text-primary">
-                <TrendingUp className="w-5 h-5" />
-                <span className="text-3xl font-bold">50+</span>
-              </div>
-              <p className="text-muted-foreground">Top Tracks</p>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-center gap-2 text-primary">
-                <Music className="w-5 h-5" />
-                <span className="text-3xl font-bold">100+</span>
-              </div>
-              <p className="text-muted-foreground">Artistas Favoritos</p>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-center gap-2 text-primary">
-                <Users className="w-5 h-5" />
-                <span className="text-3xl font-bold">10k+</span>
-              </div>
-              <p className="text-muted-foreground">Usuários Ativos</p>
-            </div>
           </div>
         </div>
       </div>

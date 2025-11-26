@@ -1,6 +1,7 @@
 import {Request, Response} from 'express';
 import { UserService } from '../services/userServices';
 import { AuthenticatedRequest } from '../authRequestInterface';
+import pool from '../config/database-connection';
 
 const userService = new UserService();
 
@@ -28,12 +29,14 @@ export const getisUserAdmin = async (req: AuthenticatedRequest, res: Response) =
 
 export const getMe = (req: AuthenticatedRequest, res: Response) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-  const { id, username, role, refresh_token } = req.user as any;
+  const { id, username, role, refresh_token, email, avatarimage } = req.user as any;
   res.json({
     id,
     username,
     role,
     spotifyConnected: !!refresh_token,
+    email,
+    avatarimage,
   });
 };
 
@@ -47,5 +50,22 @@ export const getIdByUsername = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'An error occurred while fetching user ID' });
     }
 }
+
+// GET /api/users/avatar/:username
+export const getAvatarByUsername = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+    const result = await pool.query(
+      "SELECT avatarimage FROM fmuser WHERE username = $1",
+      [username]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    return res.json({ avatarimage: result.rows[0].avatarimage });
+  } catch (e) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 

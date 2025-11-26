@@ -50,3 +50,27 @@ export const getFollowStatus = async (req: AuthenticatedRequest, res: Response) 
   );
   res.json({ isFollowing: r.rowCount > 0, followeeId });
 }
+
+
+export const getFollowingByUsername = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+    // Busca o id do usuário pelo username
+    const userRes = await pool.query("SELECT id FROM fmuser WHERE username = $1", [username]);
+    if (userRes.rowCount === 0) return res.status(404).json({ error: "User not found" });
+    const userId = userRes.rows[0].id;
+
+    // Busca os usuários que ele segue
+    const followsRes = await pool.query(
+      `SELECT u.id, u.username, u.avatarimage
+       FROM follows f
+       JOIN fmuser u ON u.id = f.followee_id
+       WHERE f.follower_id = $1`,
+      [userId]
+    );
+
+    return res.json(followsRes.rows);
+  } catch (e) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};

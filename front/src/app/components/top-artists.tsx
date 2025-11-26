@@ -24,7 +24,7 @@ export default function TopArtists({userId}: {userId: string}) {
     const firstArtist = topArtists?.items?.[0];
 
     return (
-        <div className="text-black max-w-[100vh] mt-10">
+        <div className="text-white max-w-[83vh] mt-10">
             {topArtists && topArtists.items && (
                 <h1 className="text-2xl font-bold ">TOP ARTISTS</h1>
             )}
@@ -34,14 +34,14 @@ export default function TopArtists({userId}: {userId: string}) {
                     <img 
                         src={firstArtist?.images[0]?.url} 
                         alt={firstArtist?.name} 
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-cover rounded"
                     />
                 </div>
                 )}
                 
                 <div className="w-1/2 grid grid-cols-2 h-full">
                     {topArtists && topArtists.items && topArtists.items.slice(1, 5).map((artist: any, index: number) => (
-                        <div key={index} className="h-full w-full relative overflow-hidden">
+                        <div key={index} className="h-full w-full relative overflow-hidden rounded">
                             <img 
                                 src={artist.images[0]?.url} 
                                 alt={artist.name} 

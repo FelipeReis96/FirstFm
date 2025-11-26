@@ -1,74 +1,88 @@
 @import "tailwindcss";
 
+/* Base variables (HSL only) */
 :root {
-  --background: #ffffff;
-  --foreground: #ffffff;
-  --input-border: #eee;
-  --login-button-border : #2387d9;
-  --bg-footer: #111;
-  --a : #061e33;
-  --b : #0c497a;
-  --c : #0f61a5;
-  /* Gradients */
-  --gradient-hero: linear-gradient(180deg, hsl(222 47% 11%), hsl(224 35% 15%));
-  --gradient-primary: var(--gradient-hero);
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
 
-  /* Color tokens (base) */
-  --primary: #2387d9;
-  --primary-foreground: #ffffff;
-  --secondary: #1f2937;
-  --secondary-foreground: #ffffff;
-  --muted-foreground: #9ca3af;
-  --card: hsl(222 47% 11%);
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --accent: #111827;
-  --accent-foreground: #e5e7eb;
-  --input: var(--input-border);
-  --ring: var(--primary);
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 224 35% 20%;
+  --secondary-foreground: 210 40% 98%;
+  --muted-foreground: 215 20% 65%;
+  --card: 224 35% 15%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --accent: 224 35% 18%;
+  --accent-foreground: 210 40% 98%;
+  --border: 224 35% 25%;
+  --input: 224 35% 25%;
+  --ring: 217 91% 60%;
+
+  /* Extra palette you were using */
+  --a: 206 70% 12%;
+  --b: 204 80% 26%;
+  --c: 205 80% 33%;
+
+  /* Gradients and shadows */
+  --gradient-hero: linear-gradient(180deg, hsl(222 47% 11%), hsl(224 35% 15%));
+  --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
+  --gradient-card: linear-gradient(135deg, hsl(224 35% 15%), hsl(224 35% 18%));
+  --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.3);
+  --shadow-card: 0 10px 30px -10px hsl(217 91% 60% / 0.2);
 }
 
+/* Mapear para tokens do Tailwind v4 (@theme inline) */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-card: var(--card);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Prefer dark by default; ajuste se quiser claro */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffff;
-    --foreground: #000000;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
-/* Utilities for custom gradients and glow */
-@utility bg-gradient-hero {
-  background-image: var(--gradient-hero);
-}
+/* Utilities custom (v4) */
+@utility bg-gradient-hero { background-image: var(--gradient-hero); }
+@utility bg-gradient-primary { background-image: var(--gradient-primary); }
+@utility bg-gradient-card { background-image: var(--gradient-card); }
+@utility shadow-glow { box-shadow: var(--shadow-glow); }
+@utility shadow-card { box-shadow: var(--shadow-card); }
 
-@utility bg-gradient-primary {
-  background-image: var(--gradient-primary);
-}
-
-@utility shadow-glow {
-  box-shadow: 0 0 24px 0 color-mix(in oklab, var(--primary), transparent 60%);
+/* Qualidade de renderização e seleção */
+@layer base {
+  * { border-color: hsl(var(--border)); }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  ::selection { background-color: hsl(var(--primary) / 0.25); color: hsl(var(--foreground)); }
 }

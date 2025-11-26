@@ -19,25 +19,32 @@ export default function Hero() {
 
   useEffect(() => {
     const run = async () => {
+      if (!userFromPath || user?.username === userFromPath) {
+        setIsFollowing(null);
+        return;
+      }
       const token = localStorage.getItem('jwt_token');
+      if (!token) return;
       try {
         const response = await fetch(`http://localhost:4000/api/status/${userFromPath}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
+        if (!response.ok) {
+          setIsFollowing(null);
+          return;
+        }
         const data = await response.json();
-        console.log('Follow status data:', data);
         setIsFollowing(!!data.isFollowing);
-      } catch (error) {
-        console.error('Error fetching follow status:', error);
+      } catch {
+        setIsFollowing(null);
       }
-    }
+    };
     run();
-  },[userFromPath]);
+  }, [userFromPath, user?.username]);
   
   const handleFollowUser = async () => {
     const token = localStorage.getItem('jwt_token');
+    if (!token || !userFromPath || user?.username === userFromPath) return;
     try {
       const userId = await fetch(`http://localhost:4000/api/users/getId/${userFromPath}`);
       const userIdData = await userId.json();
@@ -61,7 +68,6 @@ export default function Hero() {
           },
           body: JSON.stringify({ followeeId: userIdData.id }),
         });
-        console.log('UNFOLOOWWWW');
         setIsFollowing(prev => !prev);
       }
     } catch (error) {
@@ -96,7 +102,7 @@ export default function Hero() {
       <section className=" w-full h-[10vh] sm:h-[18vh] w-full bg-gradient-to-br from-[var(--a)] via-[var(--b)] to-[var(--c)] flex justify-start items-start">
         <div className="flex justify-center items-center"></div>
       <div className="ml-3 mt-7 sm:mt-14 md:pl-30 lg:pl-80 flex flex-row w-auto">
-        <Avatar src="/hollow.png" alt="User Avatar" size={avatarSize} />
+        <Avatar src={user?.avatarimage} alt="User Avatar" size={avatarSize} />
         <div className=" ml-5 mt-5 font-bold text-[21px] h-auto">
           {userFromPath}
           <div onClick={seeFollowing}
@@ -106,10 +112,16 @@ export default function Hero() {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
             </span>
           </div>
-          {user?.username != userFromPath && user && (<button onClick={handleFollowUser}
-          className="mt-4 text-black flex justify-center items-center rounded-full bg-blue-500 p-1">
-            {isFollowing ? 'Unfollow' : 'Follow'}
-          </button>)}
+          {user?.username !== userFromPath && user && isFollowing !== null && (
+            <button
+              onClick={handleFollowUser}
+              className={`mt-4 rounded-full px-4 py-1 text-sm font-medium ${
+                isFollowing ? 'bg-destructive text-destructive-foreground' : 'bg-primary text-primary-foreground'
+              }`}
+            >
+              {isFollowing ? 'Unfollow' : 'Follow'}
+            </button>
+          )}
         </div>
       </div>
     </section>

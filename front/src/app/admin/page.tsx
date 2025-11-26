@@ -4,6 +4,7 @@ import Header from "../header/page";
 import { useState, useEffect } from "react";
 import { useRouter} from "next/navigation";
 import { TrashIcon } from '@heroicons/react/24/outline';
+import CreateUser from "./createUser";
 
 
 interface User {
@@ -27,13 +28,9 @@ export default function Page() {
         setUsers(null);
         return;
       }
-
       const response = await fetch("http://localhost:4000/api/admin/users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (!response.ok) {
         const text = await response.text();
         console.log("Erro fetch users:", response.status, text);
@@ -43,7 +40,6 @@ export default function Page() {
         setUsers(null);
         return;
       }
-
       const usersData: User[] = await response.json();
       setUsers(usersData);
     } catch (err) {
@@ -56,9 +52,7 @@ export default function Page() {
     try {
       const response = await fetch(`http://localhost:4000/api/admin/user/${userId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${authService.getToken()}`,
-        },
+        headers: { Authorization: `Bearer ${authService.getToken()}` },
       });
       if (!response.ok) {
         const text = await response.text();
@@ -68,41 +62,64 @@ export default function Page() {
         else setError("Error deleting user");
         return;
       }
-      setUsers((prevUsers) => prevUsers?.filter((user) => user.id !== userId) || null);
+      setUsers(prev => prev?.filter(u => u.id !== userId) || null);
     } catch (error){
       console.error('Error deleting user:', error);
     }
-  }
+  };
 
-  useEffect(() => {
-    handleGetUsers();
-  },[]);
+  useEffect(() => { handleGetUsers(); }, []);
 
   return (
     <div className="h-full">
       <Header />
-      <div className="flex mt-30 text-3xl text-black justify-center">
+      <div className="mt-24 flex justify-center">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground bg-gradient-primary bg-clip-text text-transparent">
           USERS
+        </h1>
       </div>
+
+
+      {error && (
+        <div className="mt-6 flex justify-center">
+          <p className="text-sm text-destructive">{error}</p>
+        </div>
+      )}
+
       <div className="mt-10 flex justify-center">
-          {users && (
-            <ul className="grid grid-cols-2 gap-y-4 text-black gap-x-5 w-1/2">
-              {users.map((u) => (
-                <li key={u.id} className="bg-white/70 rounded-md py-2 shadow p-4"
-                onClick = {() => router.push(`/user/${u.username}`)}>
-                  {u.username}  ({u.role})
-                  <TrashIcon 
-                    className="h-5 w-5 inline ml-4 text-red-600 hover:text-red-800 cursor-pointer"
+        {users && (
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-3xl px-4">
+            {users.map((u) => (
+              <li
+                key={u.id}
+                className="group rounded-lg p-4 bg-card/40 border border-border text-foreground shadow-card hover:bg-card/60 transition-colors cursor-pointer"
+                onClick={() => router.push(`/user/${u.username}`)}
+              >
+                <div className="flex justify-between">
+                  <span className="font-semibold">{u.username}</span>
+                </div>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs px-2 py-1 rounded-full bg-primary/20 text-primary font-medium">
+                    {u.role}
+                  </span>
+                  <TrashIcon
+                    className="h-5 w-5 text-red-500 hover:text-red-600 transition-colors cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteUser(u.id);
                     }}
                   />
-                </li>
-              ))}
-            </ul>
-          )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
+
+      <div className="mt-8 flex justify-center">
+        <CreateUser />
+      </div>
+
     </div>
   );
 }
